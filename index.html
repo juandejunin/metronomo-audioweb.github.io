@@ -22,9 +22,6 @@
         <div class="display">
           <div class="displayMain"><span id="showTempo">100</span>bpm</div>
           <div class="button">
-            <!-- <button id="play">
-              <img src="./img/play-azul.png" alt="Boton de reproduccion" />
-            </button> -->
             <button id="play" data-pause-image="./img/stop-azul.png">
               <img src="./img/play-azul.png" alt="Boton de play/pause">
             </button>
@@ -55,18 +52,19 @@
             />
           </button>
         </div>
+        <div class="resolution">
+          Resolution: <select onchange="noteResolution = this.selectedIndex;">
+            <option>Semi Corcheas</option>
+            <option>Corcheas</option>
+            <option>Negras</option>
+          </select>
+        </div>
+      </div>
       </div>
 
-      <!-- <div class="resolution">
-        Resolution: <select onchange="noteResolution = this.selectedIndex;">
-          <option>Semi Corcheas</option>
-          <option>Corcheas</option>
-          <option>Negras</option>
-        </select>
-      </div> -->
-    </div>
 
-    <div id="controls"></div>
+
+    <!-- <div id="controls"></div> -->
   </body>
 </html>
 
