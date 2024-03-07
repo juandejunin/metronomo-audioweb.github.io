@@ -1,19 +1,72 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width user-scalable=no">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width user-scalable=no" />
     <title>Metronome</title>
-    <link rel="stylesheet" href="css/main.css">
-   
+    <link rel="stylesheet" href="css/main.css" />
+    <link rel="stylesheet" href="css/style.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="js/metronome.js"></script>
   </head>
   <body>
-    
-    <div id="controls">
-      <div><a class="play" onclick="this.innerText = play();">play</a></div>
-      <div id="tempoBox">Tiempo: <span id="showTempo">120</span>BPM <input id="tempo" type="range" min="30.0" max="160.0" step="1" value="120" style="height: 20px; width: 200px" onInput="tempo = event.target.value; document.getElementById('showTempo').innerText=tempo;"></div>
-      <div>Figura:<select onchange="noteResolution = this.selectedIndex;"><option>Semi Corcheas<option>Corcheas<option>Negras</select></div>
+    <div id="container">
+      <div id="title">
+        <h1>Metrónomo</h1>
+      </div>
+      <div id="metronome">
+        <div class="display">
+          <div class="displayMain"><span id="showTempo">100</span>bpm</div>
+          <div class="button">
+            <!-- <button id="play">
+              <img src="./img/play-azul.png" alt="Boton de reproduccion" />
+            </button> -->
+            <button id="play" data-pause-image="./img/stop-azul.png">
+              <img src="./img/play-azul.png" alt="Boton de play/pause">
+            </button>
+          </div>
+        </div>
+
+        <div class="control">
+          <button id="bpmSubtraction">
+            <img src="./img/menos-azul.png" alt="Boton de reducir velocidad" />
+          </button>
+
+          <input
+            id="tempo"
+            type="range"
+            min="30.0"
+            max="200.0"
+            step="1"
+            value="100"
+           
+            onInput="tempo = event.target.value; 
+          document.getElementById('showTempo').innerText=tempo;"
+          />
+
+          <button id="bpmAddition">
+            <img
+              src="./img/mas-azul.png"
+              alt="Boton de aumentar la velocidad"
+            />
+          </button>
+        </div>
+      </div>
+
+      <!-- <div class="resolution">
+        Resolution: <select onchange="noteResolution = this.selectedIndex;">
+          <option>Semi Corcheas</option>
+          <option>Corcheas</option>
+          <option>Negras</option>
+        </select>
+      </div> -->
     </div>
-   </body>
+
+    <div id="controls"></div>
+  </body>
 </html>
+

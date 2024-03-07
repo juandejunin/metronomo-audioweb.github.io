@@ -3,7 +3,7 @@ var unlocked = false;
 var isPlaying = false; // ¿Estamos sonando actualmente??
 var startTime; //  La hora de inicio de toda la secuencia.
 var current16thNote; // ¿Qué nota está programada por última vez actualmente?
-var tempo = 120.0; // tempo (en beats por minuto)
+var tempo = 100.0; // tempo (en beats por minuto)
 var lookahead = 25.0; // Con qué frecuencia llamar a la función de programación (en milisegundos)
 
 var scheduleAheadTime = 0.1; // // Con qué anticipación programar el audio (seg.)
@@ -18,6 +18,8 @@ var last16thNoteDrawn = -1; // la última "caja" que dibujamos en la pantalla
 var notesInQueue = []; // las notas que se han colocado en el audio web,
 // y que pueden o no haberse reproducido todavía. {nota, tiempo}
 var timerWorker = null; // El Web Worker usado para enviar mensajes de temporizador
+var bpmSubtractionButton = document.getElementById("bpmSubtraction");
+var bpmAdditionButton = document.getElementById("bpmAddition");
 
 // Primero, vamos a shim la API requestAnimationFrame, con un fallback de setTimeout
 window.requestAnimFrame = window.requestAnimationFrame;
@@ -81,23 +83,66 @@ function play() {
   isPlaying = !isPlaying;
 
   if (isPlaying) {
+    // Cambiar la imagen a pausa
+    var playButton = document.getElementById("play");
+    var pauseImage = playButton.getAttribute("data-pause-image");
+    playButton.querySelector("img").src = pauseImage;
     // empezar a tocar
     current16thNote = 0;
     nextNoteTime = audioContext.currentTime;
     timerWorker.postMessage("start");
     return "stop";
   } else {
+    // Cambiar la imagen a play
+    var playButton = document.getElementById("play");
+    playButton.querySelector("img").src = "./img/play-azul.png";
     timerWorker.postMessage("stop");
     return "play";
   }
 }
 
+function updateTempoDisplay() {
+  document.getElementById("showTempo").innerText = tempo;
+}
+
+function decreaseTempo() {
+  if (tempo > 30) {
+    tempo -= 1;
+    document.getElementById("tempo").value = tempo;
+    updateTempoDisplay();
+  }
+}
+
+function increaseTempo() {
+  if (tempo < 200) {
+    tempo += 1;
+    document.getElementById("tempo").value = tempo;
+    updateTempoDisplay();
+  }
+}
+
 function init() {
+  // Asignar variables a los botones
+  var playButton = document.getElementById("play");
+  var bpmSubtractionButton = document.getElementById("bpmSubtraction");
+  var bpmAdditionButton = document.getElementById("bpmAddition");
+
+  // Agregar eventos de clic a los botones
+  bpmSubtractionButton.addEventListener("click", function () {
+    decreaseTempo();
+  });
+
+  bpmAdditionButton.addEventListener("click", function () {
+    increaseTempo();
+  });
+
+  // Agrega un evento de clic al botón "play" que llama a la función play()
+  playButton.addEventListener("click", play);
+
   timerWorker = new Worker("js/metronomeworker.js");
 
   timerWorker.onmessage = function (e) {
     if (e.data == "tick") {
-      // console.log("tick!");
       scheduler();
     } else console.log("message: " + e.data);
   };
