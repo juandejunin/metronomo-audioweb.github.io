@@ -20,6 +20,9 @@ var notesInQueue = []; // las notas que se han colocado en el audio web,
 var timerWorker = null; // El Web Worker usado para enviar mensajes de temporizador
 var bpmSubtractionButton = document.getElementById("bpmSubtraction");
 var bpmAdditionButton = document.getElementById("bpmAddition");
+var volumeControl = document.getElementById("volumeControl");
+
+
 
 // Primero, vamos a shim la API requestAnimationFrame, con un fallback de setTimeout
 window.requestAnimFrame = window.requestAnimationFrame;
@@ -36,25 +39,75 @@ function nextNote() {
   }
 }
 
+function changeVolume(volume) {
+  volumeControl.value = volume;
+  console.log(volume)
+}
+
+function updateVolume(volume) {
+  if (volumeControl) {
+    volumeControl.value = volume;
+    console.log(volume)
+  }
+}
+
+// function scheduleNote(beatNumber, time) {
+//   // Ajusta el volumen del oscilador según el control deslizante de volumen
+//   var gainNode = audioContext.createGain();
+//   gainNode.connect(audioContext.destination);
+//   gainNode.gain.value = volumeControl.value;
+
+//   // Crea un oscilador con el nodo de ganancia
+//   var osc = audioContext.createOscillator();
+//   osc.connect(gainNode);
+
+//   // añade la nota a la cola, incluso si no estamos tocando.
+//   notesInQueue.push({ nota: beatNumber, tiempo: time });
+
+//   if (noteResolution == 1 && beatNumber % 2) return; // no estamos tocando notas 16th que no son de 8th
+//   if (noteResolution == 2 && beatNumber % 4) return; // no estamos tocando notas 8th que no son de quarter
+
+//   // crea un oscilador
+//   var osc = audioContext.createOscillator();
+//   osc.connect(audioContext.destination);
+//   if (beatNumber % 16 === 0)
+//     // beat 0 == tono alto
+//     osc.frequency.value = 880.0;
+//   else if (beatNumber % 4 === 0)
+//     // quarter notes = tono medio
+//     osc.frequency.value = 440.0;
+//   // otras 16th notes = tono bajo
+//   else osc.frequency.value = 220.0;
+
+//   osc.start(time);
+//   osc.stop(time + noteLength);
+// }
+
 function scheduleNote(beatNumber, time) {
-  // añade la nota a la cola, incluso si no estamos tocando.
+  // Ajusta el volumen del oscilador según el control deslizante de volumen
+  var gainNode = audioContext.createGain();
+  gainNode.connect(audioContext.destination);
+  gainNode.gain.value = volumeControl.value;
+
+  // Añade la nota a la cola, incluso si no estamos tocando.
   notesInQueue.push({ nota: beatNumber, tiempo: time });
 
-  if (noteResolution == 1 && beatNumber % 2) return; // no estamos tocando notas 16th que no son de 8th
-  if (noteResolution == 2 && beatNumber % 4) return; // no estamos tocando notas 8th que no son de quarter
+  if (noteResolution == 1 && beatNumber % 2) return; // No estamos tocando notas 16th que no son de 8th
+  if (noteResolution == 2 && beatNumber % 4) return; // No estamos tocando notas 8th que no son de quarter
 
-  // crea un oscilador
+  // Crea un oscilador con el nodo de ganancia
   var osc = audioContext.createOscillator();
-  osc.connect(audioContext.destination);
-  if (beatNumber % 16 === 0)
-    // beat 0 == tono alto
-    osc.frequency.value = 880.0;
-  else if (beatNumber % 4 === 0)
-    // quarter notes = tono medio
-    osc.frequency.value = 440.0;
-  // otras 16th notes = tono bajo
-  else osc.frequency.value = 220.0;
+  osc.connect(gainNode);
 
+  // Establece la frecuencia del oscilador según el tipo de nota
+  if (beatNumber % 16 === 0)
+    osc.frequency.value = 880.0; // Beat 0 == tono alto
+  else if (beatNumber % 4 === 0)
+    osc.frequency.value = 440.0; // Quarter notes == tono medio
+  else 
+    osc.frequency.value = 220.0; // Otras 16th notes == tono bajo
+
+  // Inicia y detiene el oscilador en los tiempos proporcionados
   osc.start(time);
   osc.stop(time + noteLength);
 }
@@ -127,6 +180,7 @@ function init() {
   var bpmSubtractionButton = document.getElementById("bpmSubtraction");
   var bpmAdditionButton = document.getElementById("bpmAddition");
 
+  volumeControl = document.getElementById("volumeControl");
   // Agregar eventos de clic a los botones
   bpmSubtractionButton.addEventListener("click", function () {
     decreaseTempo();
