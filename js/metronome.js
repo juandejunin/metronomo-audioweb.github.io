@@ -51,37 +51,6 @@ function updateVolume(volume) {
   }
 }
 
-// function scheduleNote(beatNumber, time) {
-//   // Ajusta el volumen del oscilador según el control deslizante de volumen
-//   var gainNode = audioContext.createGain();
-//   gainNode.connect(audioContext.destination);
-//   gainNode.gain.value = volumeControl.value;
-
-//   // Crea un oscilador con el nodo de ganancia
-//   var osc = audioContext.createOscillator();
-//   osc.connect(gainNode);
-
-//   // añade la nota a la cola, incluso si no estamos tocando.
-//   notesInQueue.push({ nota: beatNumber, tiempo: time });
-
-//   if (noteResolution == 1 && beatNumber % 2) return; // no estamos tocando notas 16th que no son de 8th
-//   if (noteResolution == 2 && beatNumber % 4) return; // no estamos tocando notas 8th que no son de quarter
-
-//   // crea un oscilador
-//   var osc = audioContext.createOscillator();
-//   osc.connect(audioContext.destination);
-//   if (beatNumber % 16 === 0)
-//     // beat 0 == tono alto
-//     osc.frequency.value = 880.0;
-//   else if (beatNumber % 4 === 0)
-//     // quarter notes = tono medio
-//     osc.frequency.value = 440.0;
-//   // otras 16th notes = tono bajo
-//   else osc.frequency.value = 220.0;
-
-//   osc.start(time);
-//   osc.stop(time + noteLength);
-// }
 
 function scheduleNote(beatNumber, time) {
   // Ajusta el volumen del oscilador según el control deslizante de volumen
@@ -168,7 +137,8 @@ function decreaseTempo() {
 
 function increaseTempo() {
   if (tempo < 200) {
-    tempo += 1;
+    var newTempo = parseInt(tempo) + 1;    
+    tempo = newTempo;   
     document.getElementById("tempo").value = tempo;
     updateTempoDisplay();
   }
